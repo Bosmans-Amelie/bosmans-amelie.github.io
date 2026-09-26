@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Draaiboek STS 2026</title>
+<style>
+:root{
+  --bg:#101114; --card:#1b1d22; --card2:#22252b; --line:#2c2f36;
+  --text:#f2f2f0; --sub:#a6a9b0; --accent:#e8722c; --accent2:#3fa6ff;
+  --pill:#2c2f36; --pillText:#cfd2d8;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f4f2; --card:#ffffff; --card2:#fbfbfa; --line:#e3e3e0;
+    --text:#17181a; --sub:#5a5d63; --accent:#c95a1c; --accent2:#0b6fc9;
+    --pill:#eef0f2; --pillText:#3b3e44;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101114; --card:#1b1d22; --card2:#22252b; --line:#2c2f36;
+  --text:#f2f2f0; --sub:#a6a9b0; --accent:#e8722c; --accent2:#3fa6ff;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  color:var(--text);
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 40px;}
+.head{padding:6px 2px 12px;}
+.head h1{font-size:19px;margin:0 0 2px;font-weight:700;}
+.head p{margin:0;color:var(--sub);font-size:13px;}
+.tabs{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+  display:flex;gap:6px;overflow-x:auto;padding:8px 2px;background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+.tab{
+  flex:0 0 auto;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--pill,var(--card2));color:var(--sub);white-space:nowrap;border:1px solid var(--line);
+}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.search{
+  width:100%;margin:12px 0 4px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card2);color:var(--text);font-size:14px;
+}
+.search:focus{outline:none;border-color:var(--accent2);}
+.day{display:none;}
+.day.active{display:block;}
+.sechead{
+  font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--sub);
+  text-transform:uppercase;margin:20px 4px 8px;
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;
+}
+.time{flex:0 0 56px;font-weight:700;font-size:14px;padding-top:1px;}
+.body{flex:1;min-width:0;}
+.row1{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:3px;}
+.name{font-weight:700;font-size:14px;}
+.where{font-size:11px;color:var(--sub);background:var(--pill,var(--card2));border-radius:6px;padding:1px 6px;}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;border-radius:6px;padding:1px 6px;letter-spacing:.03em;}
+.b-start{background:#1d9e75;color:#eafff6;}
+.b-end{background:#a32d2d;color:#ffecec;}
+.b-prep{background:#bA7517;color:#fff6e6;}
+.task{font-size:13.5px;color:var(--text);line-height:1.4;white-space:pre-line;}
+.crewcard{background:var(--card2);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;}
+.crewcard .name{display:block;margin-bottom:2px;}
+.crewcard .time{display:inline;font-weight:600;color:var(--sub);font-size:12px;}
+.contact{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:10px 12px;margin-bottom:8px;
+}
+.contact .co{font-weight:700;font-size:14px;}
+.contact .job{font-size:11px;color:var(--sub);margin-left:6px;}
+.contact a{color:var(--accent2);text-decoration:none;font-size:13.5px;}
+.contact .who{font-size:13px;color:var(--sub);margin-top:2px;}
+.empty{color:var(--sub);font-size:13px;text-align:center;padding:30px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>Draaiboek STIHL TIMBERSPORTS BNL 2026</h1>
+    <p>Flanders Expo Gent &middot; tik op een dag, zoek op naam</p>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <input class="search" id="search" placeholder="Zoek op naam, plek of taak...">
+  <div id="days"></div>
+</div>
+<script>
+const DATA = {
+  fri: {label:"Vr 25/09", items:[
+    ["12:00","John","","Welcome Crew"],
+    ["12:30","Sara Waterloos","","Catering"],
+    ["12:30","Crew","","Lunch"],
+    ["13:30","Eveline","","Screen hall 3"],
+    ["13:30","Eveline","","Validate Parking tickets"],
+    ["16:00","John","","Banners hangen"],
+    ["16:00","John","","Beachvlaggen plaatsen"]
+  ]},
+  sat: {label:"Za 26/09", items:[
+    ["","John","","Sorteren T-shirts WOMEN 6 / ROOKIE 6 / PRO 14"],
+    ["","John","","Sorteren Bokalen en Prijzen"],
+    ["","John","","Sorteren set Goodies Moderator eiland"],
+    ["","John","","Tassen maken voor sporters WOMEN 6 / ROOKIE 6 / PRO 14"],
+    ["","John","","Validate Parking tickets Crew"],
+    ["","John","","Ophangen Catering schema aan ijskast"],
+    ["","John","","Ophangen Foto's LIVESTREAM ATHLETES AREA"],
+    ["","Richard","","Led Screen video en stills"],
+    ["","Richard","","Prepare spot Photographer"],
+    ["","Richard","","Shirts for Sunday"],
+    ["","Richard/John","","TV's STIHL stand + laptops"],
+    ["","Sjuul","","Namen Ceremonie"],
+    ["","Leon Crahé","Smaragd","Testing"],
+    ["","Leon Crahé","Smaragd","Ledscreen / Livestream - video and stills"],
+    ["","Leon Crahé","Smaragd","Shirts for Sunday"],
+    ["","Leon Crahé","Smaragd","Testing and briefing"],
+    ["","Leon Crahé","Smaragd","Harddrive -> 3 files WeTransfer of Smash"],
+    ["","Leon Crahé","Smaragd","Questions"],
+    ["","Mihai Stetcu","Limex","Testing"],
+    ["","Mihai Stetcu","Limex","Shirts for Sunday"],
+    ["","Mihai Stetcu","Limex","Select spot Photographer"],
+    ["","Mihai Stetcu","Limex","Timing upload profile pictures"],
+    ["","Mihai Stetcu","Limex","Questions"],
+    ["10:30","Bart","","Fill out Safety"],
+    ["15:30","Bart","","Status"],
+    ["17:00","Bart","","Status"]
+  ]},
+  sun: {label:"Zo 27/09", items:[
+    ["07:15","John","Backstage","John on site"],
+    ["07:30","Crew","Backstage","Crew, Smaragd, Limex on site"],
+    ["07:30","John","Backstage","Women and Rookies on site\nValidate parking ticket + geef T-shirt"],
+    ["07:45","John-Mihai","Podium","Photoshoot Women and Rookies"],
+    ["08:00","John","Backstage","Pro Athletes on site\nValidate parking ticket + geef T-shirt"],
+    ["08:00","Davy","Backstage","Davy on site"],
+    ["08:00","Eugene","Backstage","Eugene on site"],
+    ["08:00","Bart","Atlhetes Area","Athletes meeting Women and Rookies"],
+    ["08:15","Women-Rookies","Wood prep zone","Wood preparation Women and Rookies"],
+    ["08:15","John-Mihai","Podium","Photoshoot Pro"],
+    ["08:30","Bart","Atlhetes Area","Athletes meeting Pro Athletes"],
+    ["08:45","Bart/Daan","Atlhetes Area","(Hot) Saw check sporters en STIHL saws"],
+    ["08:50","Davy","Backstage","Side kicks meet Moderator - briefing Moderator Davy + Smaragd connect"],
+    ["08:55","Davy","Technic Trailer","Deelnemerslijsten bij Sjuul ophalen"],
+    ["09:00","Youna","Backstage","Youna on site"],
+    ["09:00","Timers/Helpers","Backstage","Timers on site (Anne, Liselore, x + Y)"],
+    ["09:15","John/Youna","Moderator Island","PREP: Goodiebags, trofeeën, medailles voor WOMEN + goodies publiek","prep"],
+    ["09:30","GREEN 2026","Flanders Expo","DOORS OPEN"],
+    ["09:40","John","Podium","Start Rookie, podium opzetten na..."],
+    ["09:45","WOMEN","Podium","WOMEN's CUP - 4 disciplines (Underhand = laatste)","start"],
+    ["10:45","WOMEN","Podium","WOMEN's CUP - einde","end"],
+    ["10:45","John/Youna","Podium","Prize ceremony met Marc Ballekens, Directeur PCLT"],
+    ["10:50","John","Backstage","BEL Jimmy of Eveline: start livestream scherm Hall 3 = ROOKIES"],
+    ["10:55","John/Youna","Moderator Island","PREP: Goodiebags, trofeeën, medailles voor ROOKIES + goodies publiek","prep"],
+    ["11:00","Athalia","Atlhetes Area","Athalia on site"],
+    ["11:00","John/Youna/Athalia","VIP Area","VIP area ontvangst"],
+    ["11:00","Davy","Technic Trailer","Deelnemerslijsten bij Sjuul ophalen"],
+    ["11:25","John","Podium","Start Rookie, podium opzetten na..."],
+    ["11:30","ROOKIE","Podium","ROOKIE CUP - 5 disciplines (Underhand = laatste)","start"],
+    ["12:00","Pro Athletes","Backstage","12:00-13:30 Wood preparation Pro's"],
+    ["12:00","Lunch","Backstage","Backstage lunch athletes en crew (tot 14:00)"],
+    ["12:30","Youna","VIP Area","Welkom VIP's: naam afvinken + parking valideren"],
+    ["12:45","ROOKIE","Podium","ROOKIE CUP - einde","end"],
+    ["12:55","John/Athalia","Podium","Prize ceremony met Chris Van Wesemael, Directeur BTV"],
+    ["12:55","John","Backstage","BEL Jimmy of Eveline: start livestream scherm Hall 3 = PRO'S"],
+    ["13:00","John/Youna","VIP Area","Backstage tour"],
+    ["13:00","Athalia","VIP Area","Welkom VIP's: naam afvinken + parking valideren"],
+    ["13:30","Pro Athletes","Backstage","Einde wood preparation Pro's"],
+    ["13:30","John/Youna","VIP Area","Terug van backstage tour naar VIP area"],
+    ["13:30","VIP","VIP Area","Start VIP"],
+    ["13:40","John/Youna","Moderator Island","PREP: Goodiebags, trofeeën, medailles PRO's, kettingzaag + champagne","prep"],
+    ["13:45","Davy","Technic Trailer","Deelnemerslijsten bij Sjuul ophalen"],
+    ["14:10","John","Podium","Start Rookie, podium opzetten na..."],
+    ["14:15","Pro Athletes","Podium","PRO - 6 disciplines (Hot Saw = laatste)","start"],
+    ["17:00","Pro Athletes","Op het gras?","Warm up Hot Saws"],
+    ["17:25","Pro Athletes","Podium","PRO CHAMPIONSHIP - einde","end"],
+    ["17:30","John/Youna/Athalia","Podium","Prize ceremony met Filiep Bouckenooghe, Directeur VVOG"],
+    ["18:00","GREEN 2026","Flanders Expo","DOORS CLOSE"],
+    ["18:00","John","Backstage","Start opruimen + return box vullen voor BJ Events"],
+    ["19:00","John","Backstage","Start persbericht"]
+  ]},
+  crew: [
+    ["07:30–20:00","John","Project Lead STIHL TIMBERSPORTS — bookings en planning, coördinatie ter plaatse"],
+    ["08:00–18:00","Davy","Moderator — live presentatie en moderatie in Gent voor 3 wedstrijden"],
+    ["09:00–18:00","Youna","Marketeer — 1. Prize ceremony Women 2. VIP area start 3. Backstage tour 4. Prize ceremony Pro"],
+    ["11:00–18:00","Athalia","Marketing manager STIHL Benelux — 1. Prize ceremony Rookie 2. VIP area overname 3. Prize ceremony Pro"]
+  ],
+  contacts: {label:"Contacten", items:[
+    ["Citymesch","Internet","+32 494 61 87 64","Nico De Muynck",""],
+    ["Citymesch","Internet","+32 496 30 21 30","Stan Lioen (installeert 100/100 op STS en 10/10 op STIHL stand, pw: Stihl2026)",""],
+    ["Citymesch","Internet","+32 50 96 96 87","Helpdesk 24/7",""],
+    ["Gourmet Invent","Catering","+32 487 474 751","Sara Waterloos",""],
+    ["Easyfairs","Orga","+32 494 46 21 41","Jeroen Arnouts","Flanders Expo"],
+    ["Easyfairs","Orga","+32 497 29 56 92","Bianca Peeters","Flanders Expo"],
+    ["Easyfairs","Orga","+32 473 53 07 07","Eveline De Bruycker","Flanders Expo"],
+    ["Easyfairs","Orga","+32 472 48 62 67","Eveline De Bruycker","Flanders Expo"],
+    ["Easyfairs","Orga","+32 9 241 97 78","Bewaking","Flanders Expo"],
+    ["Smaragd","Livestream","+49 172 8482118","Leon Crahé",""],
+    ["Limex","Photographer","+40 747 137 031","Mihai Stetcu",""]
+  ]}
+};
+
+const tabsEl = document.getElementById('tabs');
+const daysEl = document.getElementById('days');
+const order = ['fri','sat','sun','contacts'];
+
+order.forEach((key,i)=>{
+  const t = document.createElement('div');
+  t.className = 'tab' + (i===2?' active':'');
+  t.textContent = DATA[key].label;
+  t.dataset.key = key;
+  t.onclick = ()=> selectTab(key);
+  tabsEl.appendChild(t);
+
+  const d = document.createElement('div');
+  d.className = 'day' + (i===2?' active':'');
+  d.id = 'day-'+key;
+  daysEl.appendChild(d);
+});
+
+function badgeHtml(kind){
+  if(kind==='start') return '<span class="badge b-start">Start</span>';
+  if(kind==='end') return '<span class="badge b-end">Einde</span>';
+  if(kind==='prep') return '<span class="badge b-prep">Prep</span>';
+  return '';
+}
+
+function renderTimeline(key){
+  const el = document.getElementById('day-'+key);
+  const items = DATA[key].items;
+  let html = '';
+  items.forEach(it=>{
+    const [time,name,where,task,kind] = it;
+    html += `<div class="card" data-search="${(name+' '+where+' '+task).toLowerCase()}">
+      <div class="time">${time||'—'}</div>
+      <div class="body">
+        <div class="row1"><span class="name">${name}</span>${where?`<span class="where">${where}</span>`:''}${badgeHtml(kind)}</div>
+        <div class="task">${task}</div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderCrew(){
+  const el = document.getElementById('day-sun');
+  let html = '<div class="sechead">STIHL Crew — hoofdtaken</div>';
+  DATA.crew.forEach(([time,name,task])=>{
+    html += `<div class="crewcard" data-search="${(name+' '+task).toLowerCase()}">
+      <span class="name">${name}</span>
+      <span class="time">${time}</span>
+      <div class="task" style="margin-top:4px;">${task}</div>
+    </div>`;
+  });
+  el.insertAdjacentHTML('beforeend', html);
+}
+
+function renderContacts(){
+  const el = document.getElementById('day-contacts');
+  let html = '';
+  DATA.contacts.items.forEach(([co,job,phone,contact,where])=>{
+    html += `<div class="contact" data-search="${(co+' '+job+' '+contact+' '+where).toLowerCase()}">
+      <div><span class="co">${co}</span><span class="job">${job}</span></div>
+      <div class="who">${contact}${where?' · '+where:''}</div>
+      <a href="tel:${phone.replace(/\s+/g,'')}">${phone}</a>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+renderTimeline('fri');
+renderTimeline('sat');
+renderTimeline('sun');
+renderCrew();
+renderContacts();
+
+function selectTab(key){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.key===key));
+  document.querySelectorAll('.day').forEach(d=>d.classList.toggle('active', d.id==='day-'+key));
+  document.getElementById('search').value='';
+  filter('');
+}
+
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', e=> filter(e.target.value.toLowerCase().trim()));
+
+function filter(q){
+  document.querySelectorAll('.day.active [data-search]').forEach(card=>{
+    card.style.display = (!q || card.dataset.search.includes(q)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
